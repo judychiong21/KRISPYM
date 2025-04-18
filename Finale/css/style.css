@@ -1,0 +1,43 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+h3{
+    margin-top:38%;
+    margin-left: 70%;
+}
+ul{
+    margin-left: 20%;
+    float: left;
+    font-size: 2rem;
+}
+h5{
+    margin-right: 20%;
+    float: right;
+    font-size: 2rem;
+}
+.container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    background-color:#e86b6b;
+    height: 100vh;
+}
+    .nav-bar {
+        grid-column: 1/11;
+        height: 1vh;
+        font-size: 2rem;
+    }
+
+h2{
+    margin-top: -4%;
+    color:black
+}
+
+.image-me img{
+ 
+    margin: 10%;
+    margin-top: 1rem;
+    margin-inline-start: 400px;
+    height: 7%;
+    width: 45%;
+}
