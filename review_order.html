@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Your Order</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .review-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+        .order-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+        .order-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .order-list li:last-child {
+            border-bottom: none;
+        }
+        .item-name {
+            font-weight: bold;
+        }
+        .item-price {
+            font-weight: bold;
+            color: #28a745;
+        }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .button {
+            background-color: #dc3545; /* Red for Back */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .button.continue {
+            background-color: #007bff;
+            float: right;
+            margin-right: 5rem;
+        }
+        .button.continue1 {
+            background-color: #e30f0fb8;
+            float: left;
+            margin-left: 5rem;
+
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="review-container">
+        <h2>Review Your Order</h2>
+        <p>Please confirm your selections:</p>
+        <ul class="order-list" id="order-summary">
+            </ul>
+        <div class="total">
+            <span>Total Bill:</span>
+            <span id="total-price">₱0.00</span>
+        </div>
+        <div class="button-container">
+            <form method="dialog">
+                <button class="button continue1" onclick="window.history.back()">Back</button>
+            </form>
+            <form method="dialog">
+                <button class="button continue" onclick="window.location.href='payment.html'">Proceed</button>
+            </form>
+            
+        </div>
+    </div>
+
+    <script>
+        const orderSummary = document.getElementById('order-summary');
+        const totalPriceElement = document.getElementById('total-price');
+        const confirmButton = document.getElementById('confirm-button');
+        let grandTotal = 0;
+
+        // Function to retrieve order data from localStorage
+        function getOrderData() {
+            const orderDataString = localStorage.getItem('currentOrder');
+            console.log('Retrieved currentOrder:', orderDataString);
+            return orderDataString ? JSON.parse(orderDataString) : {};
+        }
+
+        // Function to retrieve the price of an item from localStorage
+        function getItemPrice(itemName) {
+            const pricesString = localStorage.getItem('itemPrices');
+            const prices = pricesString ? JSON.parse(pricesString) : {};
+            return prices[itemName] || 0;
+        }
+
+        function displayOrder() {
+            const orderDetails = getOrderData();
+            console.log('orderDetails in displayOrder:', orderDetails);
+
+            orderSummary.innerHTML = ''; // Clear previous items
+            grandTotal = 0;
+
+            for (const itemName in orderDetails) {
+                console.log('Processing item:', itemName, orderDetails[itemName]);
+
+                if (orderDetails.hasOwnProperty(itemName) && orderDetails[itemName] > 0) {
+                    const quantity = orderDetails[itemName];
+                    const price = getItemPrice(itemName);
+                    const itemTotalPrice = quantity * price;
+
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span class="item-name">${itemName}</span>
+                        <span class="item-price">₱${itemTotalPrice.toFixed(2)}</span>
+                    `;
+                    orderSummary.appendChild(listItem);
+                    grandTotal += itemTotalPrice;
+                }
+            }
+            totalPriceElement.textContent = `₱${grandTotal.toFixed(2)}`;
+        }
+
+        // Call displayOrder when the page loads
+        displayOrder();
+
+        // Simulate sending the order to the backend (replace with actual backend logic)
+        confirmButton.addEventListener('click', () => {
+            const finalOrder = getOrderData();
+            alert('Order Confirmed!\n' + JSON.stringify(finalOrder) + '\nTotal: ₱' + grandTotal.toFixed(2));
+            // In a real application, you would send 'finalOrder' to your backend server
+            // using fetch or XMLHttpRequest for processing and storage.
+        });
+
+        // Store item prices in localStorage when the menu page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const prices = {};
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const itemName = item.querySelector('.item-name').textContent;
+                const itemPriceText = item.querySelector('.item-price').textContent.replace('₱', '');
+                prices[itemName] = parseFloat(itemPriceText);
+            });
+            localStorage.setItem('itemPrices', JSON.stringify(prices));
+        });
+
+        // Store the current order in localStorage whenever the quantity changes on the menu page
+        const menuItemsForStorage = document.querySelectorAll('.menu-item');
+        menuItemsForStorage.forEach(item => {
+            const minusButton = item.querySelector('.quantity-controls button:first-child');
+            const plusButton = item.querySelector('.quantity-controls button:last-child');
+            const quantitySpan = item.querySelector('.quantity-controls span');
+            const itemName = item.querySelector('.item-name').textContent;
+
+            minusButton.addEventListener('click', () => {
+                updateOrderInStorage(itemName, parseInt(quantitySpan.textContent));
+            });
+
+            plusButton.addEventListener('click', () => {
+                updateOrderInStorage(itemName, parseInt(quantitySpan.textContent));
+            });
+        });
+
+        function updateOrderInStorage(itemName, quantity) {
+            const currentOrder = getOrderData();
+            currentOrder[itemName] = quantity;
+            localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
+        }
+        confirmButton.addEventListener('click', () => {
+    const finalOrder = getOrderData();
+    fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalOrder),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Order submitted:', data);
+        // Redirect to a confirmation page or the payment page
+        window.location.href = 'payment.html?orderId=' + data.orderId;
+    })
+    .catch(error => {
+        console.error('Error submitting order:', error);
+        alert('Failed to submit order. Please try again.');
+    });
+});
+    </script>
+</body>
+</html>
