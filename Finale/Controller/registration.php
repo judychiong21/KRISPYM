@@ -1,7 +1,7 @@
 <?php
 
-include('../class/Users.php');
-$user = new Users();
+include('../class/Admin.php');
+$user = new Admiin();
 
 if(isset($_POST['register'])){
     $name = $_POST['name'];

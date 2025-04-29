@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .payment-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            margin: 50px auto;
+            text-align: left;
+        }
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        .payment-method {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .payment-method label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .payment-method input[type="radio"] {
+            margin-right: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .pay-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 25px;
+            float: right;
+
+        }
+        .back-button {
+            background-color: #e30f0fb8;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 25px;
+            float: left;
+        }
+        #gcash-details, #card-details {
+            display: none;
+        }
+       
+        #gcash-details {
+         
+            text-align: center;
+        }
+        .gcash-qr-code {
+            max-width: 200px;
+            margin: 10px auto;
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .upload-screenshot {
+            margin-top: 15px;
+            text-align: left;
+        }
+        .upload-screenshot label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .upload-screenshot input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+   
+
+    <div class="payment-container">
+       <center> <h2>Personal Information</h2></center>
+        <label>
+           Receivers Name :<input type="text" name="info" ><BR>
+           Delivery Address :<input type="text" name="info" ><BR>
+           Cellphone  Num. :<input type="int" name="info"><BR>
+        </label>
+        <br>
+
+    
+        
+       <center><h2>Choose Payment Method</h2></center> 
+           <div class="payment-method">
+            <label>
+                <input type="radio" name="payment" value="gcash" id="gcash-radio"> GCash
+            </label>
+            <div id="gcash-details">
+                <p></p>
+                <p><strong>Send the payment to: </strong> <span id="your-gcash-number"></span></p>
+                
+                <div class="upload-screenshot">
+                    <label for="gcash-screenshot">Upload Screenshot of Payment:</label>
+                    <input type="file" id="gcash-screenshot" accept="image/*">
+                    <p style="font-size: 0.8em; color: #777;">(Allowed formats: JPG, PNG)</p>
+                </div>
+                <p>Once done, click 'Confirm Payment'.</p>
+            </div>
+        </div>
+
+        <div class="payment-method">
+            <label>
+                <input type="radio" name="payment" value="cash" id="cash-radio"> Cash on Delivery
+            </label>
+        </div>
+        <button class="back-button" onclick="window.history.back()">Back to Review</button>
+        <button class="pay-button" onclick="processPayment()">Confirm Payment</button>
+       
+    </div>
+
+    <script>
+        const gcashRadio = document.getElementById('gcash-radio');
+        const cardRadio = document.getElementById('card-radio');
+        const cashRadio = document.getElementById('cash-radio');
+        const gcashDetails = document.getElementById('gcash-details');
+       
+        const yourGcashNumberSpan = document.getElementById('your-gcash-number');
+        const gcashScreenshotInput = document.getElementById('gcash-screenshot');
+
+        // Replace with your actual GCash number
+        const yourGcashNumber = "09976023770";
+        yourGcashNumberSpan.textContent = yourGcashNumber;
+
+        gcashRadio.addEventListener('change', () => {
+            gcashDetails.style.display = gcashRadio.checked ? 'block' : 'none';
+         
+        });
+
+        cardRadio.addEventListener('change', () => {
+            cardDetails.style.display = cardRadio.checked ? 'block' : 'none';
+            gcashDetails.style.display = 'none';
+        });
+
+        cashRadio.addEventListener('change', () => {
+            gcashDetails.style.display = 'none';
+           
+        });
+
+        function processPayment() {
+            const selectedPayment = document.querySelector('input[name="payment"]:checked');
+
+            if (!selectedPayment) {
+                alert('Please select a payment method.');
+                return;
+            }
+
+            if (selectedPayment.value === 'gcash') {
+                const gcashScreenshot = gcashScreenshotInput.files[0];
+                if (!gcashScreenshot) {
+                    alert('Please upload a screenshot of your GCash payment.');
+                    return;
+                }
+                alert(`GCash payment initiated for number: ${yourGcashNumber}. Screenshot uploaded. We will verify your payment.`);
+                // In a real application, you would need to:
+                // 1. Send the order details and the uploaded file to your backend server.
+                // 2. Your backend would then handle the file upload (e.g., to a storage service like AWS S3 or Google Cloud Storage) and associate it with the order.
+                // 3. You would likely need a manual process on your end to verify the payment using the screenshot.
+            } else if (selectedPayment.value === 'card') {
+                const cardNumber = document.getElementById('card-number').value;
+                const expiryDate = document.getElementById('expiry-date').value;
+                const cvv = document.getElementById('cvv').value;
+                
+             
+            } else if (selectedPayment.value === 'cash') {
+                alert('Cash on Delivery selected. Your order will be processed.');
+                // ... (cash on delivery handling) ...
+            }
+
+            // ... (potential redirection to confirmation) ...
+        }
+    </script>
+</body>
+</html>

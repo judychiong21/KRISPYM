@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Your Order</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .order-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .item-name {
+            font-weight: bold;
+        }
+        .item-quantity {
+            margin-left: 20px;
+        }
+        .item-price {
+            font-weight: bold;
+        }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .confirm-button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .confirm-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .back-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <h1>Review Your Order</h1>
+
+        <div id="order-items">
+            </div>
+
+        <div class="total">
+            <span>Total</span>
+            <span id="total-amount">₱0.00</span>
+        </div>
+
+        <div class="confirm-button-container">
+            <button class="confirm-button">Confirm Order</button>
+        </div>
+
+        <div class="back-button-container">
+            <button class="back-button" onclick="window.history.back();">Back to Menu</button>
+        </div>
+    </div>
+
+    <script>
+        // Retrieve order data from local storage or however it was passed
+        const orderDataString = localStorage.getItem('currentOrder');
+        const orderData = orderDataString ? JSON.parse(orderDataString) : {};
+
+        const orderItemsContainer = document.getElementById('order-items');
+        const totalAmountSpan = document.getElementById('total-amount');
+        let grandTotal = 0;
+
+        // Function to display the order items
+        function displayOrder() {
+            orderItemsContainer.innerHTML = ''; // Clear any existing items
+            grandTotal = 0;
+
+            for (const itemName in orderData) {
+                if (orderData.hasOwnProperty(itemName) && orderData[itemName].quantity > 0) {
+                    const item = orderData[itemName];
+                    const orderItemDiv = document.createElement('div');
+                    orderItemDiv.classList.add('order-item');
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.classList.add('item-name');
+                    nameSpan.textContent = itemName;
+
+                    const quantitySpan = document.createElement('span');
+                    quantitySpan.classList.add('item-quantity');
+                    quantitySpan.textContent = `x ${item.quantity}`;
+
+                    const priceSpan = document.createElement('span');
+                    priceSpan.classList.add('item-price');
+                    priceSpan.textContent = `₱${(item.quantity * item.price).toFixed(2)}`;
+
+                    orderItemDiv.appendChild(nameSpan);
+                    orderItemDiv.appendChild(quantitySpan);
+                    orderItemDiv.appendChild(priceSpan);
+                    orderItemsContainer.appendChild(orderItemDiv);
+
+                    grandTotal += item.quantity * item.price;
+                }
+            }
+            totalAmountSpan.textContent = `₱${grandTotal.toFixed(2)}`;
+        }
+
+        // Call the function to display the order when the page loads
+        displayOrder();
+
+        // In a real backend scenario, the "Confirm Order" button would trigger
+        // an AJAX request to send the order data to the server for processing.
+        document.querySelector('.confirm-button').addEventListener('click', () => {
+            alert('Order Confirmed! (Backend processing would happen here)');
+            // In a real application, you would send the orderData to your backend
+            // using fetch or XMLHttpRequest.
+            // Example:
+            
+            fetch('/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                // Redirect to a confirmation page or show a success message
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Show an error message to the user
+            });
+        
+        });
+    </script>
+</body>
+</html>
