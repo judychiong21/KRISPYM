@@ -1,44 +1,44 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+	s<link rel="stylesheet" type="text/css" href="css/style.css">
     <title>Log in</title>
 </head>
 
 <body>
+<div class="d-flex justify-content-center align-items-center vh-100">
 
-    <div class="hero bg-base-200 min-h-screen">
-        <div class="hero-content flex-col lg:flex-row-reverse">
-            <div class="text-center lg:text-left">
-                <h1 class="text-5xl font-bold">Login now!</h1>
-                <p class="py-6">
-                    Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-                    quasi. In deleniti eaque aut repudiandae et a id nisi.
-                </p>
+<form class="shadow w-450 p-3" method="post">
+<h1>WELCOME TO KRISPY M!</h1>
+    		<h4 class="display-4 color-red fs-1">Log in Here!</h4><br>
+    		<?php if(isset($_GET['error'])){ ?>
+    		<div class="alert alert-danger" role="alert">
+			  <?php echo $_GET['error']; ?>
+			</div>
+		    <?php } ?>   
+            
+            <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" />
             </div>
-            <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                <div class="card-body">
-                    <fieldset class="fieldset">
-                        <label class="fieldset-label">Username</label>
-                        <input type="email" class="input" id="username" placeholder="Email" />
 
-                        <label class="fieldset-label">Password</label>
-                        <input type="password" class="input" id="password" placeholder="Password" />
-
-                        <div><a class="link link-hover">Forgot password?</a></div>
-                        <button type="button" class="btn btn-neutral mt-4 loginuser" id="loginuser">Login</button>
-                    </fieldset>
-                </div>
+            <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password"/>
             </div>
-        </div>
-    </div>
-    
+                        <button type="button" class="btn btn-primary loginuser" id="loginuser">Login</button>
+                        <a href="../pages/home.php" class="link-secondary">Sign up</a>
+            </form>
 </body>
 <script src="../assets/js/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

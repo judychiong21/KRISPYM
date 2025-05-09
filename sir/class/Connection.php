@@ -1,6 +1,6 @@
 <?php
 
-class Dbh
+class connection
 {
     private $host = 'localhost';
     private $username = 'root';

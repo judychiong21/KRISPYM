@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer's Information</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#e15750] font-sans">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Customer's Information</h2>
+      <form>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-2">Full Name</label>
+          <input type="text" placeholder="Ave D. Benting" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-gray-700 font-semibold mb-2">Phone Number</label>
+          <input type="tel" placeholder="09xxxxxxxxx" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-gray-700 font-semibold mb-2">Delivery Address</label>
+          <textarea placeholder="204 Tavera st., Bais City (other message )" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
+        </div>
+
+        <center><a class="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-md transition duration-200". onclick="window.location.href='payment.html'">
+          Proceed Payment
+        </a>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

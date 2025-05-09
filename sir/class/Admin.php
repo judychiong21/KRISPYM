@@ -16,7 +16,7 @@ class Admin extends Dbh
         $db = $this->connect();
         $status = "pending";
 
-        $stmt = $db->prepare("INSERT INTO tbl_rooms (r_name,r_number,r_price,r_quantity,r_description,r_image,r_date_added,r_status) VALUES (?,?,?,?,?,?,NOW(),?)");
+        $stmt = $db->prepare("INSERT INTO users(r_name,r_number,r_price,r_quantity,r_description,r_image,r_date_added,r_status) VALUES (?,?,?,?,?,?,NOW(),?)");
         $stmt->bind_param("ssiisss", $room, $rnumber,$price, $quantity, $description, $img, $status);
         $stmt->execute();
         $result = $stmt->get_result();

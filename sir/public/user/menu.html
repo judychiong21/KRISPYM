@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href=" ../../assets/css/style.css">
+
+    <title>Menu</title>
+   
+</head>
+<body>
+    <div class="menu-container">
+    <button class="back" onclick="window.history.back()">Back</button><br>
+
+          <center><h2>MENU</h2></center> 
+        <div class="menu-item">
+            <div class="item-image">
+                <img src="../user/Items_IMG/lemon.jpg" alt="Lemon Pepper">
+            </div>
+            <div class="item-details">
+                <div class="item-name">Lemon Pepper</div>
+                <div class="quantity-controls">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="item-price">₱370.00</div>
+        </div>
+        <div class="menu-item">
+            <div class="item-image">
+                <img src="../user/Items_IMG/honey.jpg" alt="Honey Mustard">
+            </div>
+            <div class="item-details">
+                <div class="item-name">Honey Mustard</div>
+                <div class="quantity-controls">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="item-price">₱380.00</div>
+        </div>
+        <div class="menu-item">
+            <div class="item-image">
+                <img src="../user/Items_IMG/buffalo.jpg" alt="buffalo">
+            </div>
+            <div class="item-details">
+                <div class="item-name">Buffalo</div>
+                <div class="quantity-controls">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="item-price">₱360.00</div>
+        </div>
+        <div class="menu-item">
+            <div class="item-image">
+                <img src="../user/Items_IMG/garlic.jpg" alt="Garlic Parmesan">
+            </div>
+            <div class="item-details">
+                <div class="item-name">Garlic Parmesan</div>
+                <div class="quantity-controls">
+                    <button>-</button>
+                    <span>0</span>
+                    <button>+</button>
+                </div>
+            </div>
+            <div class="item-price">₱350.00</div>
+        </div>
+        <div class="total-bill">
+            <span>Total Bill</span>
+            <span>₱0.00</span>
+        </div>
+       
+    </div>
+
+    <script>
+        // Basic JavaScript to handle quantity changes and total bill (client-side only)
+        const menuItems = document.querySelectorAll('.menu-item');
+        const totalBillSpan = document.querySelector('.total-bill span:last-child');
+        let total = 0;
+
+        menuItems.forEach(item => {
+            const minusButton = item.querySelector('.quantity-controls button:first-child');
+            const plusButton = item.querySelector('.quantity-controls button:last-child');
+            const quantitySpan = item.querySelector('.quantity-controls span');
+            const price = parseFloat(item.querySelector('.item-price').textContent.replace('₱', ''));
+            let quantity = 0;
+
+            minusButton.addEventListener('click', () => {
+                if (quantity > 0) {
+                    quantity--;
+                    quantitySpan.textContent = quantity;
+                    updateTotal();
+                }
+            });
+
+            plusButton.addEventListener('click', () => {
+                quantity++;
+                quantitySpan.textContent = quantity;
+                updateTotal();
+            });
+
+            function updateTotal() {
+                total = 0;
+                menuItems.forEach(item => {
+                    const itemQuantity = parseInt(item.querySelector('.quantity-controls span').textContent);
+                    const itemPrice = parseFloat(item.querySelector('.item-price').textContent.replace('₱', ''));
+                    total += itemQuantity * itemPrice;
+                });
+                totalBillSpan.textContent = `₱${total.toFixed(2)}`;
+            }
+        });
+    </script>
+ <div class="proceed-button-container">
+    <div class="proceed-button-container">
+        <button class="proceed-button" onclick="window.location.href='review_order.html'">Review</button>
+    </div>             <dialog id="my_modal_4" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl">
+              
+
+
+
+                  
+            <body>
+                <div class="review-container">
+                    <h2>Review Your Order</h2>
+                    <p>Please confirm your selections:</p>
+                    <ul class="order-list" id="order-summary">
+                        </ul>
+                    <div class="total">
+                        <span>Total Bill:</span>
+                        <span id="total-price">₱0.00</span>
+                    </div>
+                    <div class="button-container">
+                        <form method="dialog">
+                            <button class="button">Back</button>
+                            <button class="button continue" id="confirm-button">Confirm Order</button>
+                            
+                        </form>
+                    </div>
+                </div>
+            
+                <script>
+                    const orderSummary = document.getElementById('order-summary');
+                    const totalPriceElement = document.getElementById('total-price');
+                    const confirmButton = document.getElementById('confirm-button');
+                    let grandTotal = 0;
+            
+                    // Function to retrieve order data from localStorage
+                    function getOrderData() {
+                        const orderDataString = localStorage.getItem('currentOrder');
+                        return orderDataString ? JSON.parse(orderDataString) : {};
+                    }
+            
+                    // Function to retrieve the price of an item from localStorage
+                    function getItemPrice(itemName) {
+                        const pricesString = localStorage.getItem('itemPrices');
+                        const prices = pricesString ? JSON.parse(pricesString) : {};
+                        return prices[itemName] || 0;
+                    }
+            
+                    function displayOrder() {
+                        const orderDetails = getOrderData();
+                        orderSummary.innerHTML = ''; // Clear previous items
+                        grandTotal = 0;
+            
+                        for (const itemName in orderDetails) {
+                            if (orderDetails.hasOwnProperty(itemName) && orderDetails[itemName] > 0) {
+                                const quantity = orderDetails[itemName];
+                                const price = getItemPrice(itemName);
+                                const itemTotalPrice = quantity * price;
+            
+                                const listItem = document.createElement('li');
+                                listItem.innerHTML = `
+                                    <span class="item-name">${itemName}</span>
+                                    <span class="item-price">₱${itemTotalPrice.toFixed(2)}</span>
+                                `;
+                                orderSummary.appendChild(listItem);
+                                grandTotal += itemTotalPrice;
+                            }
+                        }
+                        totalPriceElement.textContent = `₱${grandTotal.toFixed(2)}`;
+                    }
+            
+                    // Call displayOrder when the page loads
+                    displayOrder();
+            
+                    // Simulate sending the order to the backend (replace with actual backend logic)
+                    confirmButton.addEventListener('click', () => {
+                        const finalOrder = getOrderData();
+                        alert('Order Confirmed!\n' + JSON.stringify(finalOrder) + '\nTotal: ₱' + grandTotal.toFixed(2));
+                        // In a real application, you would send 'finalOrder' to your backend server
+                        // using fetch or XMLHttpRequest for processing and storage.
+                    });
+            
+                    // Store item prices in localStorage when the menu page loads
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const prices = {};
+                        const menuItems = document.querySelectorAll('.menu-item');
+                        menuItems.forEach(item => {
+                            const itemName = item.querySelector('.item-name').textContent;
+                            const itemPriceText = item.querySelector('.item-price').textContent.replace('₱', '');
+                            prices[itemName] = parseFloat(itemPriceText);
+                        });
+                        localStorage.setItem('itemPrices', JSON.stringify(prices));
+                    });
+            
+                    // Store the current order in localStorage whenever the quantity changes on the menu page
+                    const menuItemsForStorage = document.querySelectorAll('.menu-item');
+                    menuItemsForStorage.forEach(item => {
+                        const minusButton = item.querySelector('.quantity-controls button:first-child');
+                        const plusButton = item.querySelector('.quantity-controls button:last-child');
+                        const quantitySpan = item.querySelector('.quantity-controls span');
+                        const itemName = item.querySelector('.item-name').textContent;
+            
+                        minusButton.addEventListener('click', () => {
+                            updateOrderInStorage(itemName, parseInt(quantitySpan.textContent));
+                        });
+            
+                        plusButton.addEventListener('click', () => {
+                            updateOrderInStorage(itemName, parseInt(quantitySpan.textContent));
+                        });
+                    });
+            
+                    function updateOrderInStorage(itemName, quantity) {
+                        const currentOrder = getOrderData();
+                        currentOrder[itemName] = quantity;
+                        localStorage.setItem('currentOrder', JSON.stringify(currentOrder));
+                    }
+                    
+                </script>
+                
+            </body>
+
+          <div class="modal-action">
+      <form method="dialog">
+        <button class="back-button">Back</button>                              
+        <button class="back-button">Continue</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+        </div>
+</body>
+</html>
+
+
+

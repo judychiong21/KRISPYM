@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+
+<body class="bg-[#e15750] text-gray-800 font-sans min-h-screen flex items-center justify-center px-4">
+  <div class="bg-white rounded-2xl shadow-lg p-8 max-w-lg w-full">
+    <h2 class="text-2xl font-bold text-center mb-6">Payment Method</h2>
+
+    <form>
+      <div class="border-t border-gray-200 pt-4 mt-4">
+        
+
+        <div class="mb-4">
+          <label class="block font-semibold mb-1" for="paymentMethod">Select Payment Option</label>
+          <select id="paymentMethod" name="paymentMethod" onchange="updateCODInfo()" required
+                  class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+           
+            <option value="gcash">GCash</option>
+            <option value="cod">Cash on Delivery (COD)</option>
+          </select>
+        </div>
+
+        <div id="gcashDetails" class="hidden">
+          <p class="mb-2 text-sm text-gray-600">You will be redirected to the GCash gateway after submitting.</p>
+          <label class="block font-semibold mb-1" for="gcashMobile">GCash Mobile Number</label>
+          <input type="tel" id="gcashMobile" name="gcashMobile"
+                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+        </div>
+
+        <div id="codDetails" class="hidden mt-2">
+          <p class="text-sm text-gray-700">You selected Cash on Delivery.</p>
+          <p class="text-green-600 text-sm mt-1">A fee of ₱20.00 will be added to your total.</p>
+        </div>
+      </div>
+
+      
+      <button type="submit"
+              class="mt-6 w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded-md transition duration-200">
+        Place Order
+      </button>
+    </form>
+  </div>
+
+  <script>
+    
+    function updateCODInfo() {
+      const paymentMethod = document.getElementById("paymentMethod").value;
+      const gcashDetails = document.getElementById("gcashDetails");
+      const codDetails = document.getElementById("codDetails");
+
+      gcashDetails.classList.add("hidden");
+      codDetails.classList.add("hidden");
+
+      if (paymentMethod === "gcash") {
+        gcashDetails.classList.remove("hidden");
+      } else if (paymentMethod === "cod") {
+        codDetails.classList.remove("hidden");
+      }
+    }
+    fetch('/api.php?action=process_order', {  // Corrected URL
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        paymentMethod: document.getElementById('paymentMethod').value,
+        gcashMobile: document.getElementById('gcashMobile').value,
+        items: getOrderDetailsFromLocalStorage() // Function to get items from storage
+    }),
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Order response:', data);
+    alert(data.message); // Show message to user
+
+    if (data.orderId) {
+      //  window.location.href = `confirmation.html?orderId=${data.orderId}`; // Redirect
+    }
+    else{
+       // window.location.href = `error.html`;
+    }
+
+})
+.catch(error => {
+    console.error('Error submitting order:', error);
+    alert('Failed to submit order.  Please check console and try again.');
+});
+
+
+function getOrderDetailsFromLocalStorage() {
+  const orderDataString = localStorage.getItem('currentOrder');
+  const orderData = orderDataString ? JSON.parse(orderDataString) : {};
+  const itemPricesString = localStorage.getItem('itemPrices');
+  const itemPrices = itemPricesString ? JSON.parse(itemPricesString) : {};
+  const items = [];
+
+  for (const itemName in orderData) {
+    if (orderData.hasOwnProperty(itemName) && orderData[itemName] > 0) {
+      const quantity = orderData[itemName];
+      const price = itemPrices[itemName] || 0;
+      const item_id = getItemIdByName(itemName); // You'll need this function
+      items.push({
+        item_id: item_id,
+        name: itemName,
+        quantity: quantity,
+        price: price
+      });
+    }
+  }
+  return items;
+}
+
+function getItemIdByName(itemName) {
+    switch (itemName) {
+        case "Lemon Pepper": return 1;
+        case "Honey Mustard": return 2;
+        case "Buffalo": return 3;
+        case "Garlic Parmesan": return 4;
+        default: return 0;
+    }
+}
+
+  </script>
+  
+</body>
+</html>

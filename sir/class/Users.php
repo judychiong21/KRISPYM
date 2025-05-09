@@ -1,7 +1,7 @@
 <?php
 include('Connection.php');
 
-class Users extends Dbh
+class Users extends connection
 {
 
     public function register($sanitized_username, $sanitized_password)
